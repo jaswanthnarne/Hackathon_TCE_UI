@@ -8,6 +8,8 @@ import EmptyState from '../../common/EmptyState';
 import { Loader } from '../../common/Loader';
 import { formatDate } from '../../../utils/formatDate';
 import toast from 'react-hot-toast';
+import TeamImportModal from './TeamImportModal';
+import TeamEditModal from './TeamEditModal';
 
 const TeamManagement = () => {
   const [teams, setTeams] = useState([]);
@@ -17,7 +19,8 @@ const TeamManagement = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [showCreate, setShowCreate] = useState(false);
-  const [showDetail, setShowDetail] = useState(null);
+  const [showImport, setShowImport] = useState(false);
+  const [editTeamId, setEditTeamId] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -81,7 +84,10 @@ const TeamManagement = () => {
           <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-100">Team Management</h1>
           <p className="text-dark-500 dark:text-dark-400">{pagination?.total || 0} teams registered</p>
         </div>
-        <button onClick={() => setShowCreate(true)} className="btn-primary">+ Create Team</button>
+        <div className="flex gap-2">
+          <button onClick={() => setShowImport(true)} className="btn-secondary">Import Excel/CSV</button>
+          <button onClick={() => setShowCreate(true)} className="btn-primary">+ Create Team</button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -125,7 +131,7 @@ const TeamManagement = () => {
                     <td className="px-4 py-3 text-sm text-dark-500">{formatDate(team.createdAt)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => setShowDetail(team)} className="btn-ghost text-xs">View</button>
+                        <button onClick={() => setEditTeamId(team._id)} className="btn-ghost text-xs">Manage</button>
                         {team.status === 'pending' && <button onClick={() => handleStatus(team._id, 'approved')} className="text-xs text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 px-2 py-1 rounded">Approve</button>}
                         <button onClick={() => handleResetPassword(team._id)} className="text-xs text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 px-2 py-1 rounded">Reset PW</button>
                         <button onClick={() => setConfirmDelete(team._id)} className="text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded">Delete</button>
@@ -166,32 +172,22 @@ const TeamManagement = () => {
         </form>
       </Modal>
 
-      {/* Detail Modal */}
-      <Modal isOpen={!!showDetail} onClose={() => setShowDetail(null)} title={`Team: ${showDetail?.teamId}`} size="lg">
-        {showDetail && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div><span className="label">Team ID</span><p className="font-mono font-bold text-primary-600">{showDetail.teamId}</p></div>
-              <div><span className="label">Team Name</span><p className="font-semibold">{showDetail.teamName}</p></div>
-              <div><span className="label">Status</span><StatusBadge status={showDetail.status} /></div>
-              <div><span className="label">Members</span><p>{showDetail.members?.length || 0}</p></div>
-            </div>
-            <h4 className="font-semibold border-t border-dark-100 dark:border-dark-700 pt-4">Members</h4>
-            <div className="space-y-2">
-              {showDetail.members?.map((m, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-dark-50 dark:bg-dark-900 rounded-lg">
-                  <div>
-                    <p className="font-medium">{m.name} {m.isLead && <span className="badge-info ml-2">Lead</span>}</p>
-                    <p className="text-xs text-dark-400">{m.email} {m.usn && <span className="font-mono uppercase bg-dark-200 dark:bg-dark-800 px-1 rounded ml-1">{m.usn}</span>} • {m.college}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </Modal>
+      {/* Manage/Edit Modal */}
+      <TeamEditModal 
+        isOpen={!!editTeamId} 
+        onClose={() => setEditTeamId(null)} 
+        teamId={editTeamId}
+        onSuccess={() => { fetchTeams(); }}
+      />
 
       <ConfirmDialog isOpen={!!confirmDelete} onClose={() => setConfirmDelete(null)} onConfirm={handleDelete} title="Delete Team" message="Are you sure? This action cannot be undone." confirmText="Delete" loading={actionLoading} />
+      
+      {/* Import Modal */}
+      <TeamImportModal 
+        isOpen={showImport} 
+        onClose={() => setShowImport(false)} 
+        onSuccess={() => { setShowImport(false); fetchTeams(); }} 
+      />
     </div>
   );
 };

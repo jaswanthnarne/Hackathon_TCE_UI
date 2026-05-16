@@ -11,6 +11,7 @@ const adminService = {
   // Teams
   getTeams: (params) => api.get('/admin/teams', { params }),
   createTeam: (data) => api.post('/admin/teams', data),
+  bulkImportTeamsJson: (data) => api.post('/admin/teams/bulk-import-json', data),
   getTeam: (id) => api.get(`/admin/teams/${id}`),
   updateTeam: (id, data) => api.put(`/admin/teams/${id}`, data),
   deleteTeam: (id) => api.delete(`/admin/teams/${id}`),
