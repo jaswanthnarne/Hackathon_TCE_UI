@@ -77,6 +77,24 @@ const TeamManagement = () => {
     } catch (err) { toast.error('Failed to reset password'); }
   };
 
+  const handleUnlock = async (id) => {
+    try {
+      await adminService.unlockTeam(id);
+      toast.success('Team account unlocked successfully!');
+      fetchTeams();
+    } catch (err) { toast.error('Failed to unlock team'); }
+  };
+
+  const handleLock = async (id) => {
+    const reason = window.prompt('Enter reason for locking this account (optional):', 'Administrative Lock');
+    if (reason === null) return;
+    try {
+      await adminService.changeTeamStatus(id, { status: 'locked', reason });
+      toast.success('Team account locked successfully!');
+      fetchTeams();
+    } catch (err) { toast.error('Failed to lock team'); }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -127,11 +145,32 @@ const TeamManagement = () => {
                     <td className="px-4 py-3 font-medium text-dark-900 dark:text-dark-100">{team.teamName}</td>
                     <td className="px-4 py-3"><div className="text-sm">{team.teamLead?.name}</div><div className="text-xs text-dark-400">{team.teamLead?.email}</div></td>
                     <td className="px-4 py-3 text-sm">{team.members?.length || 0}</td>
-                    <td className="px-4 py-3"><StatusBadge status={team.status} /></td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <StatusBadge status={team.status} />
+                        {team.lockUntil && new Date(team.lockUntil) > new Date() && (
+                          <span className="badge-danger text-[10px] flex items-center gap-1 py-0.5 px-1.5 font-bold" title="Locked due to wrong password attempts">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            Locked (Attempts)
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-sm text-dark-500">{formatDate(team.createdAt)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button onClick={() => setEditTeamId(team._id)} className="btn-ghost text-xs">Manage</button>
+                        {(team.status === 'locked' || (team.lockUntil && new Date(team.lockUntil) > new Date())) ? (
+                          <button onClick={() => handleUnlock(team._id)} className="text-xs text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-2 py-1 rounded font-bold flex items-center gap-1" title="Unlock Account">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                            Unlock
+                          </button>
+                        ) : (
+                          <button onClick={() => handleLock(team._id)} className="text-xs text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 px-2 py-1 rounded font-bold flex items-center gap-1" title="Lock Account">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            Lock
+                          </button>
+                        )}
                         {team.status === 'pending' && <button onClick={() => handleStatus(team._id, 'approved')} className="text-xs text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 px-2 py-1 rounded">Approve</button>}
                         <button onClick={() => handleResetPassword(team._id)} className="text-xs text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 px-2 py-1 rounded">Reset PW</button>
                         <button onClick={() => setConfirmDelete(team._id)} className="text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded">Delete</button>

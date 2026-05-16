@@ -41,10 +41,10 @@ const FAQItem = ({ question, answer }) => {
 const HomePage = () => {
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
-  useEffect(() => { 
+  useEffect(() => {
     teamService.getHackathonInfo()
       .then(res => { setConfig(res.data.data.config); setLoading(false); })
-      .catch(() => { setLoading(false); }); 
+      .catch(() => { setLoading(false); });
   }, []);
 
   if (loading) {
@@ -92,16 +92,16 @@ const HomePage = () => {
               <Icon d="M13 10V3L4 14h7v7l9-11h-7z" className="w-3 h-3" />
               {c.tagline || 'CODE. CREATE. CONQUER.'}
             </div>
-            
+
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight text-slate-900 leading-[1.1]">
               {lp.heroTitle || 'Collaborating for'}<br />
               <span className="text-[#004b9b]">{lp.heroSubtitle || 'Educational Excellence'}</span>
             </h1>
-            
+
             <p className="text-lg text-slate-600 mb-10 max-w-xl font-normal leading-relaxed">
               {lp.heroDescription || c.description || 'Annual hackathon organized by TCE College, Gadag in collaboration with Ethnotech. 50 hours of programming followed by an exciting hackathon challenge!'}
             </p>
-            
+
             <div className="flex gap-4 items-center flex-wrap">
               <Link to="/team/login" className="h-12 px-8 rounded-lg bg-[#004b9b] text-white font-medium text-base flex items-center justify-center hover:bg-[#003d80] transition-colors shadow-sm">
                 {lp.ctaPrimaryText || 'Take Assessment'} &rarr;
@@ -110,7 +110,7 @@ const HomePage = () => {
                 {lp.ctaSecondaryText || 'View Details'}
               </a>
             </div>
-            
+
             {lp.stats && lp.stats.length > 0 && (
               <div className="mt-12 flex items-center gap-6 text-sm font-medium text-slate-500 flex-wrap">
                 {lp.stats.map((stat, i) => (
@@ -122,18 +122,18 @@ const HomePage = () => {
               </div>
             )}
           </div>
-          
-          <div className="relative animate-slide-up" style={{animationDelay: '0.2s'}}>
-             <div className="absolute inset-0 bg-blue-100 rounded-[2.5rem] transform translate-x-4 translate-y-4"></div>
-             {c.bannerUrl ? (
-               <img src={c.bannerUrl} alt="Hero Banner" className="relative w-full h-[500px] object-cover rounded-[2.5rem] shadow-xl border-4 border-white" />
-             ) : (
-               <div className="relative w-full h-[500px] bg-gradient-to-br from-[#4F46E5] to-[#2563EB] rounded-[2.5rem] shadow-xl border-4 border-white flex flex-col items-center justify-center text-white overflow-hidden">
-                 <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-                 <Icon d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" className="w-24 h-24 mb-6 opacity-90" />
-                 <h3 className="text-3xl font-bold">Innovation Awaits</h3>
-               </div>
-             )}
+
+          <div className="relative animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <div className="absolute inset-0 bg-blue-100 rounded-[2.5rem] transform translate-x-4 translate-y-4"></div>
+            {c.bannerUrl ? (
+              <img src={c.bannerUrl} alt="Hero Banner" className="relative w-full h-[500px] object-cover rounded-[2.5rem] shadow-xl border-4 border-white" />
+            ) : (
+              <div className="relative w-full h-[500px] bg-gradient-to-br from-[#4F46E5] to-[#2563EB] rounded-[2.5rem] shadow-xl border-4 border-white flex flex-col items-center justify-center text-white overflow-hidden">
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
+                <Icon d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" className="w-24 h-24 mb-6 opacity-90" />
+                <h3 className="text-3xl font-bold">Innovation Awaits</h3>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -355,7 +355,7 @@ const HomePage = () => {
                 <span>{lp.contactEmail || 'info@tcehack.in'}</span>
               </div>
             </div>
-            
+
             {c.socialLinks && (c.socialLinks.instagram || c.socialLinks.linkedin || c.socialLinks.youtube) && (
               <>
                 <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-8 mb-4">Connect With Us</h4>
@@ -385,7 +385,7 @@ const HomePage = () => {
           <div className="flex gap-6">
             <a href="#" className="hover:text-white transition-colors">Terms</a>
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="/admin/login" className="hover:text-white transition-colors">Admin Login</a>
+            {/* <a href="/admin/login" className="hover:text-white transition-colors">Admin Login</a> */}
           </div>
         </div>
       </footer>

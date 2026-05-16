@@ -19,6 +19,7 @@ const adminService = {
   changeTeamStatus: (id, data) => api.put(`/admin/teams/${id}/status`, data),
   resetTeamPassword: (id) => api.put(`/admin/teams/${id}/reset-password`),
   forcePasswordChange: (id, data) => api.put(`/admin/teams/${id}/force-password-change`, data),
+  unlockTeam: (id) => api.put(`/admin/teams/${id}/unlock`),
   exportTeams: () => api.get('/admin/teams/export', { responseType: 'blob' }),
 
   // Members

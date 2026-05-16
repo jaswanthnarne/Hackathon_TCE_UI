@@ -57,31 +57,36 @@ const TeamImportModal = ({ isOpen, onClose, onSuccess }) => {
 
         data.forEach(row => {
           // Team Name
-          const teamName = getVal(row, ['Team Name for Project and Hackathon', 'Team Name']);
+          const teamName = getVal(row, ['Team Name for Project and Hackathon', 'Team Name', 'Team Name / Project Name', 'Project Name', 'Title of Project', 'Project Title']);
           if (!teamName) return; // Skip empty rows
 
           // Team Lead (P1)
-          const leadName = getVal(row, ['Team Lead Name', 'Name of Participant -1', 'Name of Participant 1']);
-          const leadEmail = getVal(row, ["Team Lead Mail I'd", 'Team Lead Mail Id', 'Mail P-1', 'Mail P1']);
-          const leadUsn = getVal(row, ['Team Lead USN', 'USN P-1', 'USN P1']);
-          const leadPhone = getVal(row, ['Team Lead Phone Number', 'Mobile P-1', 'Mobile P1']);
-          const collegeDept = getVal(row, ['Department']);
+          const leadName = getVal(row, ['Team Lead Name', 'Name of Participant -1', 'Name of Participant 1', 'Participant 1 Name', 'Participant 1', 'Leader Name', 'P1 Name', 'Team Leader Name', 'Lead Name', 'Full Name']);
+          const leadEmail = getVal(row, ["Team Lead Mail I'd", 'Team Lead Mail Id', 'Mail P-1', 'Mail P1', 'Participant 1 Email', 'Participant 1 Mail', 'Leader Email', 'Lead Email', 'P1 Email', 'Email', 'Email Address']);
+          const leadUsn = getVal(row, ['Team Lead USN', 'USN P-1', 'USN P1', 'Participant 1 USN', 'Leader USN', 'Lead USN', 'P1 USN', 'USN', 'Roll Number', 'Register Number']);
+          const leadPhone = getVal(row, ['Team Lead Phone Number', 'Team Lead Phone', 'Mobile P-1', 'Mobile P1', 'Participant 1 Phone', 'Participant 1 Mobile', 'Leader Phone', 'Lead Phone', 'P1 Phone', 'P1 Mobile', 'Phone', 'Mobile', 'Phone Number', 'WhatsApp Number']);
+          const collegeDept = getVal(row, ['Department', 'College', 'College Name', 'Institution', 'University', 'College/Institution Name']);
 
           const members = [];
           
-          // Parse P2 to P5
-          for (let i = 2; i <= 5; i++) {
-            const mName = getVal(row, [`Name of Participant -${i}`, `Name of Participant ${i}`]);
-            const mUsn = getVal(row, [`USN P-${i}`, `USN P${i}`]);
-            const mEmail = getVal(row, [`Mail P-${i}`, `Mail P${i}`]);
-            const mPhone = getVal(row, [`Mobile P-${i}`, `Mobile P${i}`]);
+          // Parse P2 to P6
+          for (let i = 2; i <= 6; i++) {
+            const mName = getVal(row, [`Name of Participant -${i}`, `Name of Participant ${i}`, `Participant ${i} Name`, `Participant ${i}`, `Member ${i} Name`, `Team Member ${i} Name`, `P${i} Name`, `Name P${i}`, `Member ${i}`]);
+            const mUsn = getVal(row, [`USN P-${i}`, `USN P${i}`, `Participant ${i} USN`, `Member ${i} USN`, `P${i} USN`, `USN (P${i})`]);
+            const mEmail = getVal(row, [`Mail P-${i}`, `Mail P${i}`, `Participant ${i} Email`, `Participant ${i} Mail`, `Member ${i} Email`, `P${i} Email`, `Email P${i}`, `Email (P${i})`]);
+            const mPhone = getVal(row, [`Mobile P-${i}`, `Mobile P${i}`, `Participant ${i} Phone`, `Participant ${i} Mobile`, `Member ${i} Phone`, `Member ${i} Mobile`, `P${i} Phone`, `P${i} Mobile`, `Phone P${i}`, `Mobile P${i}`, `Phone (P${i})`]);
 
             if (mName || mEmail || mUsn) {
+              const cleanTeamName = teamName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'team';
+              const cleanUsn = mUsn ? mUsn.toLowerCase() : '';
+              const randomPart = Math.random().toString(36).substring(2,6);
+              const fallbackEmail = mEmail || `${cleanUsn || 'member' + i + '_' + randomPart}@${cleanTeamName}.com`;
+
               members.push({
-                name: mName,
-                email: mEmail,
-                usn: mUsn,
-                phone: mPhone,
+                name: mName || `Member ${i}`,
+                email: fallbackEmail,
+                usn: mUsn ? mUsn.toUpperCase() : '',
+                phone: mPhone || '',
                 college: collegeDept
               });
             }
@@ -90,9 +95,9 @@ const TeamImportModal = ({ isOpen, onClose, onSuccess }) => {
           formattedTeams.push({
             teamName,
             teamLead: {
-              name: leadName,
-              email: leadEmail,
-              usn: leadUsn,
+              name: leadName || 'Team Lead',
+              email: leadEmail || `lead_${Math.random().toString(36).substring(2,6)}@${teamName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'team'}.com`,
+              usn: leadUsn ? leadUsn.toUpperCase() : '',
               phone: leadPhone,
               college: collegeDept
             },
@@ -147,20 +152,31 @@ const TeamImportModal = ({ isOpen, onClose, onSuccess }) => {
       {loading && <div className="py-10"><Loader text="Processing..." /></div>}
 
       {!loading && step === 1 && (
-        <div className="space-y-6 text-center py-10">
-          <p className="text-dark-500">Upload your Google Forms Excel (.xlsx) or CSV export.</p>
-          <div className="flex justify-center">
-            <input 
-              type="file" 
-              accept=".xlsx, .xls, .csv" 
-              onChange={handleFileUpload}
-              className="block w-full max-w-sm text-sm text-dark-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-full file:border-0
-                file:text-sm file:font-semibold
-                file:bg-primary-50 file:text-primary-700 dark:file:bg-primary-900/20 dark:file:text-primary-400
-                hover:file:bg-primary-100 transition-all cursor-pointer"
-            />
+        <div className="py-12 px-6 flex flex-col items-center justify-center text-center">
+          <div className="w-20 h-20 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center mb-6 shadow-sm border border-primary-100 dark:border-primary-800">
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-bold text-dark-900 dark:text-dark-100 mb-2">Upload Data File</h3>
+          <p className="text-dark-500 max-w-md mx-auto mb-8">
+            Select your Google Forms Excel (.xlsx) or CSV export file to begin bulk importing teams and generating accounts automatically.
+          </p>
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-blue-500 rounded-lg blur opacity-30 group-hover:opacity-50 transition duration-200"></div>
+            <div className="relative bg-white dark:bg-dark-900 px-6 py-4 rounded-lg border-2 border-dashed border-primary-300 dark:border-primary-700 flex flex-col items-center hover:border-primary-500 dark:hover:border-primary-500 transition-colors">
+              <input 
+                type="file" 
+                accept=".xlsx, .xls, .csv" 
+                onChange={handleFileUpload}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              />
+              <svg className="w-8 h-8 text-primary-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span className="text-primary-700 dark:text-primary-400 font-semibold">Click or drag file here</span>
+              <span className="text-xs text-dark-400 mt-1">Supports .xlsx, .csv</span>
+            </div>
           </div>
         </div>
       )}
