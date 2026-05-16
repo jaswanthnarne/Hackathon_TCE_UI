@@ -38,9 +38,185 @@ const FAQItem = ({ question, answer }) => {
   );
 };
 
+const TermsPrivacyModal = ({ activeModal, onClose, config }) => {
+  if (!activeModal) return null;
+
+  const isTerms = activeModal === 'terms';
+  const c = config || {};
+  const orgName = c.name || 'TCE Hackathon';
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden my-8 flex flex-col max-h-[85vh] animate-slide-up">
+        {/* Header */}
+        <div className="flex items-center justify-between px-8 py-6 border-b border-slate-100 bg-slate-50/80 sticky top-0 z-10 backdrop-blur-sm">
+          <div>
+            <div className="inline-block px-2.5 py-1 rounded-md bg-blue-50 text-[#004b9b] text-xs font-bold uppercase tracking-wider mb-1.5">
+              {isTerms ? 'Legal Information' : 'Privacy & Data'}
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+              {isTerms ? 'Terms of Service & Conditions' : 'Privacy Policy'}
+            </h2>
+          </div>
+          <button 
+            onClick={onClose}
+            className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close modal"
+          >
+            <Icon d="M6 18L18 6M6 6l12 12" className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="p-8 overflow-y-auto space-y-8 text-slate-600 leading-relaxed text-sm">
+          {isTerms ? (
+            <>
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">1</span>
+                  Acceptance of Terms
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  By accessing, registering for, or participating in the {orgName} platform powered by Ethnotech Academy, you agree to be bound by these Terms of Service, all applicable laws, and regulations. If you do not agree with any part of these terms, you are prohibited from using or accessing this platform.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">2</span>
+                  Eligibility & Registration
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  Participation is open to eligible students and professionals as outlined in the official event guidelines. You agree to provide accurate, current, and complete information during the registration process and to update such information to keep it accurate, current, and complete.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">3</span>
+                  Code of Conduct & Ethics
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  Participants are expected to conduct themselves with the highest standards of integrity, professionalism, and respect. Any form of harassment, discrimination, disruptive behavior, or academic dishonesty—including plagiarism or unauthorized use of third-party code—will result in immediate disqualification and account termination.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">4</span>
+                  Intellectual Property Rights
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  All intellectual property rights in the projects, source code, and materials developed during the hackathon remain the exclusive property of the respective creator teams, unless explicitly stated otherwise under specific sponsor track agreements. You grant {orgName} and Ethnotech Academy a non-exclusive, royalty-free license to showcase project descriptions, team names, and presentation media for promotional and archival purposes.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">5</span>
+                  Platform Integrity & Security
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  The assessment and hackathon platform is provided on an "as is" and "as available" basis. Attempting to probe, scan, test the vulnerability of the system, breach security measures, or engage in automated scraping or reverse engineering of the assessment algorithms is strictly prohibited.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">6</span>
+                  Limitation of Liability
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  In no event shall {orgName}, TCE College, Ethnotech Academy, or its partners be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with your participation in the event or inability to use the platform.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">1</span>
+                  Information We Collect
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  We collect personal identification information during the registration and team formation process. This includes, but is not limited to, your full name, email address, phone number, institutional affiliation (such as University/College USN or Roll Number), academic details, and assessment performance metrics.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">2</span>
+                  How We Use Your Information
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  The data we collect is used strictly to facilitate the hackathon lifecycle. This includes verifying participant eligibility, managing team structures, administering online coding assessments, sending critical event notifications, providing technical support, and awarding certificates and prizes.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">3</span>
+                  Data Protection & Security Measures
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  We adopt robust data collection, storage, and processing practices alongside industry-standard security measures. We utilize secure socket layer (SSL) encryption and advanced server safeguards to protect your personal information, username, password, and transaction data against unauthorized access, alteration, disclosure, or destruction.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">4</span>
+                  Sharing of Personal Information
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  We do not sell, trade, or rent participant personal identification information to outside third parties. We may share generic aggregated demographic information not linked to any personal identification information with our business partners. Necessary participant data may be shared with official event judges, mentors, and sponsoring organizations solely for evaluation, mentoring, and award fulfillment purposes.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">5</span>
+                  Cookies & Session Tracking
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  Our platform utilizes essential cookies and session tokens to maintain user authentication, preserve assessment states, and ensure seamless navigation across the portal. You may choose to set your web browser to refuse cookies; however, doing spiral may prevent certain core functionalities of the platform from operating correctly.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-[#004b9b] flex items-center justify-center text-xs font-bold">6</span>
+                  Your Rights & Data Control
+                </h3>
+                <p className="pl-8 text-slate-600">
+                  You have the right to access, review, update, or request the deletion of your personal information maintained on our platform. If you wish to exercise any of these rights or have inquiries regarding our data privacy practices, please contact our administrative support team.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-8 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between sticky bottom-0 z-10 backdrop-blur-sm">
+          <div className="text-xs text-slate-500 font-medium">
+            Last updated: May 2026 • Ethnotech Academy
+          </div>
+          <button 
+            onClick={onClose}
+            className="h-10 px-6 rounded-lg bg-[#004b9b] text-white font-medium text-sm flex items-center justify-center hover:bg-[#003d80] transition-colors shadow-sm cursor-pointer"
+          >
+            I Understand & Agree
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const HomePage = () => {
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeModal, setActiveModal] = useState(null);
   useEffect(() => {
     teamService.getHackathonInfo()
       .then(res => { setConfig(res.data.data.config); setLoading(false); })
@@ -382,13 +558,20 @@ const HomePage = () => {
         </div>
         <div className="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium">
           <div>&copy; {new Date().getFullYear()} {c.name || 'TCE Hackathon'}. All Rights Reserved.</div>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+          <div className="flex gap-6 items-center">
+            <button onClick={() => setActiveModal('terms')} className="bg-transparent border-none p-0 text-slate-400 hover:text-white transition-colors cursor-pointer font-medium text-xs">Terms</button>
+            <button onClick={() => setActiveModal('privacy')} className="bg-transparent border-none p-0 text-slate-400 hover:text-white transition-colors cursor-pointer font-medium text-xs">Privacy</button>
             {/* <a href="/admin/login" className="hover:text-white transition-colors">Admin Login</a> */}
           </div>
         </div>
       </footer>
+
+      {/* Terms & Privacy Modal */}
+      <TermsPrivacyModal 
+        activeModal={activeModal} 
+        onClose={() => setActiveModal(null)} 
+        config={config} 
+      />
     </div>
   );
 };
