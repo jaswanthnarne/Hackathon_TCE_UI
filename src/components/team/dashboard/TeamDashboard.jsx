@@ -7,19 +7,51 @@ const TeamDashboard = () => {
   const { team } = useTeamAuth();
   const [profile, setProfile] = useState(null);
   const [announcements, setAnnouncements] = useState([]);
+  const [timerState, setTimerState] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, annRes] = await Promise.all([teamService.getProfile(), teamService.getAnnouncements()]);
+        const [profileRes, annRes, infoRes] = await Promise.all([
+          teamService.getProfile(),
+          teamService.getAnnouncements(),
+          teamService.getHackathonInfo()
+        ]);
         setProfile(profileRes.data.data.team);
         setAnnouncements(annRes.data.data.announcements || []);
+        if (infoRes.data.data.config?.timer) {
+          setTimerState(infoRes.data.data.config.timer);
+        }
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    let interval;
+    if (timerState && timerState.status === 'running') {
+      interval = setInterval(() => {
+        setTimerState(prev => {
+          if (!prev || prev.remaining <= 1) {
+            clearInterval(interval);
+            return prev ? { ...prev, remaining: 0, status: 'idle' } : null;
+          }
+          return { ...prev, remaining: prev.remaining - 1 };
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timerState?.status]);
+
+  const formatTimer = (totalSeconds) => {
+    if (totalSeconds == null) return '00:00:00';
+    const hours = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   if (loading) return <Loader text="Loading dashboard..." />;
 
@@ -34,6 +66,31 @@ const TeamDashboard = () => {
           <span className="bg-white/20 px-3 py-1 rounded-full capitalize">{profile?.status}</span>
         </div>
       </div>
+
+      {/* Live Sprint Timer */}
+      {timerState && (
+        <div className={`card p-6 border-l-4 ${timerState.status === 'running' ? 'border-emerald-500 bg-gradient-to-r from-emerald-500/10 to-transparent dark:from-emerald-500/5' : timerState.status === 'paused' ? 'border-amber-500 bg-gradient-to-r from-amber-500/10 to-transparent dark:from-amber-500/5' : 'border-slate-500 bg-slate-50 dark:bg-dark-900'}`}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`w-2.5 h-2.5 rounded-full ${timerState.status === 'running' ? 'bg-emerald-500 animate-ping' : timerState.status === 'paused' ? 'bg-amber-500' : 'bg-slate-400'}`} />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-dark-400">Hackathon Sprint Timer</h3>
+              </div>
+              <p className="text-xs text-slate-400 dark:text-dark-500 mt-0.5">
+                {timerState.status === 'running' ? 'Coding phase is active. Keep building!' : timerState.status === 'paused' ? 'Hackathon timer is currently paused by organizers.' : 'Hackathon timer is idle or has ended.'}
+              </p>
+            </div>
+            <div className="flex items-center gap-3 bg-white dark:bg-dark-900 px-6 py-3 rounded-xl border border-slate-200 dark:border-dark-700 shadow-sm">
+              <span className="text-3xl sm:text-4xl font-mono font-black text-slate-900 dark:text-white tracking-wider">
+                {formatTimer(timerState.remaining)}
+              </span>
+              <span className={`px-2.5 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wide ${timerState.status === 'running' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 animate-pulse' : timerState.status === 'paused' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : 'bg-slate-200 text-slate-700 dark:bg-dark-800 dark:text-dark-300'}`}>
+                {timerState.status}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Team Members */}

@@ -22,6 +22,7 @@ import Announcements from './components/admin/announcements/Announcements';
 import HackathonSettings from './components/admin/config/HackathonSettings';
 import LandingPageConfig from './components/admin/landing/LandingPageConfig';
 import AuditLogs from './components/admin/audit/AuditLogs';
+import TimerManagement from './components/admin/timer/TimerManagement';
 import { EmailComposer } from './components/admin/stubs';
 
 // Team
@@ -77,6 +78,7 @@ function App() {
                 <Route path="email" element={<EmailComposer />} />
                 <Route path="landing" element={<LandingPageConfig />} />
                 <Route path="config" element={<HackathonSettings />} />
+                <Route path="timer" element={<TimerManagement />} />
                 <Route path="audit" element={<AuditLogs />} />
               </Route>
 

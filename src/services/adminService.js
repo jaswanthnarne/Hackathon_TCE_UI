@@ -87,6 +87,7 @@ const adminService = {
   // Config
   getConfig: () => api.get('/console/admin/config'),
   updateConfig: (data) => api.put('/console/admin/config', data),
+  updateTimer: (data) => api.post('/console/admin/config/timer', data),
   uploadLogo: (data) => api.post('/console/admin/config/logo', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
   uploadBanner: (data) => api.post('/console/admin/config/banner', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
 
