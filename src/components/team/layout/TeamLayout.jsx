@@ -19,13 +19,12 @@ const TeamLayout = () => {
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
   const [unseenCount, setUnseenCount] = useState(0);
   const [config, setConfig] = useState(null);
+  const [timerState, setTimerState] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
   const { team, logout } = useTeamAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    teamService.getHackathonInfo().then(res => setConfig(res.data.data.config)).catch(() => {});
-  }, []);
 
   const toggleDark = () => {
     const next = !darkMode;
@@ -36,29 +35,64 @@ const TeamLayout = () => {
 
   const handleLogout = () => { logout(); navigate('/team/login'); };
 
-  // Check for unseen announcements
-  const checkUnseen = useCallback(async () => {
+  // Centralized background fetch function (Smart Polling)
+  const fetchDashboardData = useCallback(async () => {
     try {
-      const { data } = await teamService.getAnnouncements();
-      const announcements = data.data.announcements || [];
-      if (announcements.length === 0) { setUnseenCount(0); return; }
+      const [profileRes, annRes, infoRes] = await Promise.all([
+        teamService.getProfile(),
+        teamService.getAnnouncements(),
+        teamService.getHackathonInfo()
+      ]);
 
-      const lastSeen = localStorage.getItem('lastSeenAnnouncementTime');
-      if (!lastSeen) {
-        setUnseenCount(announcements.length);
-      } else {
-        const unseen = announcements.filter(a => new Date(a.createdAt) > new Date(lastSeen));
-        setUnseenCount(unseen.length);
+      const newProfile = profileRes.data?.data?.team;
+      const newAnn = annRes.data?.data?.announcements || [];
+      const newConfig = infoRes.data?.data?.config;
+
+      if (newProfile) setProfile(newProfile);
+      if (newAnn) setAnnouncements(newAnn);
+      if (newConfig) {
+        setConfig(newConfig);
+        if (newConfig.timer) setTimerState(newConfig.timer);
       }
-    } catch (err) { /* silent */ }
+
+      // Check for unseen announcements
+      if (newAnn.length === 0) {
+        setUnseenCount(0);
+      } else {
+        const lastSeen = localStorage.getItem('lastSeenAnnouncementTime');
+        if (!lastSeen) {
+          setUnseenCount(newAnn.length);
+        } else {
+          const unseen = newAnn.filter(a => new Date(a.createdAt) > new Date(lastSeen));
+          setUnseenCount(unseen.length);
+        }
+      }
+    } catch (err) { /* silent background polling */ }
   }, []);
 
+  // Initial fetch + 3-second polling loop
   useEffect(() => {
-    checkUnseen();
-    // Poll every 30 seconds
-    const interval = setInterval(checkUnseen, 30000);
+    fetchDashboardData();
+    const interval = setInterval(fetchDashboardData, 3000); // Poll every 3 seconds!
     return () => clearInterval(interval);
-  }, [checkUnseen]);
+  }, [fetchDashboardData]);
+
+  // Second-by-second timer countdown
+  useEffect(() => {
+    let interval;
+    if (timerState && timerState.status === 'running') {
+      interval = setInterval(() => {
+        setTimerState(prev => {
+          if (!prev || prev.remaining <= 1) {
+            clearInterval(interval);
+            return prev ? { ...prev, remaining: 0, status: 'idle' } : null;
+          }
+          return { ...prev, remaining: prev.remaining - 1 };
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timerState?.status]);
 
   // Mark as seen when visiting announcements page
   useEffect(() => {
@@ -67,6 +101,7 @@ const TeamLayout = () => {
       setUnseenCount(0);
     }
   }, [location.pathname]);
+
 
   return (
     <div className="min-h-screen flex bg-dark-50 dark:bg-dark-950">
@@ -165,7 +200,7 @@ const TeamLayout = () => {
           </div>
         </header>
         <div className="p-6">
-          <Outlet context={{ config }} />
+          <Outlet context={{ config, timerState, profile, announcements, refreshData: fetchDashboardData }} />
         </div>
       </main>
     </div>

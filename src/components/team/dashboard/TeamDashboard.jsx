@@ -1,49 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { useTeamAuth } from '../../../context/TeamAuthContext';
-import teamService from '../../../services/teamService';
-import { Loader } from '../../common/Loader';
 
 const TeamDashboard = () => {
   const { team } = useTeamAuth();
-  const [profile, setProfile] = useState(null);
-  const [announcements, setAnnouncements] = useState([]);
-  const [timerState, setTimerState] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { profile, announcements, timerState } = useOutletContext();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [profileRes, annRes, infoRes] = await Promise.all([
-          teamService.getProfile(),
-          teamService.getAnnouncements(),
-          teamService.getHackathonInfo()
-        ]);
-        setProfile(profileRes.data.data.team);
-        setAnnouncements(annRes.data.data.announcements || []);
-        if (infoRes.data.data.config?.timer) {
-          setTimerState(infoRes.data.data.config.timer);
-        }
-      } catch (err) { console.error(err); }
-      finally { setLoading(false); }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    let interval;
-    if (timerState && timerState.status === 'running') {
-      interval = setInterval(() => {
-        setTimerState(prev => {
-          if (!prev || prev.remaining <= 1) {
-            clearInterval(interval);
-            return prev ? { ...prev, remaining: 0, status: 'idle' } : null;
-          }
-          return { ...prev, remaining: prev.remaining - 1 };
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [timerState?.status]);
 
   const formatTimer = (totalSeconds) => {
     if (totalSeconds == null) return '00:00:00';
@@ -53,7 +14,7 @@ const TeamDashboard = () => {
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (loading) return <Loader text="Loading dashboard..." />;
+
 
   return (
     <div className="space-y-6 animate-fade-in">

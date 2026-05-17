@@ -7,8 +7,7 @@ import toast from 'react-hot-toast';
 
 const TeamProfile = () => {
   const { team } = useTeamAuth();
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { config, profile, refreshData } = useOutletContext();
   const [showInvite, setShowInvite] = useState(false);
   const [inviteForm, setInviteForm] = useState({ name: '', email: '', usn: '', phone: '', college: '', year: '', branch: '' });
   const [inviting, setInviting] = useState(false);
@@ -19,11 +18,7 @@ const TeamProfile = () => {
   const [editing, setEditing] = useState(false);
 
   const fetchProfile = async () => {
-    try {
-      const { data } = await teamService.getProfile();
-      setProfile(data.data.team);
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
+    if (refreshData) await refreshData();
   };
 
   const fetchPendingInvites = async () => {
@@ -33,7 +28,7 @@ const TeamProfile = () => {
     } catch (err) { console.error(err); }
   };
 
-  useEffect(() => { fetchProfile(); fetchPendingInvites(); }, []);
+  useEffect(() => { fetchPendingInvites(); }, []);
 
   const handleInvite = async (e) => {
     e.preventDefault();
@@ -87,9 +82,7 @@ const TeamProfile = () => {
     }
   };
 
-  if (loading) return <Loader text="Loading profile..." />;
 
-  const { config } = useOutletContext();
   const maxMembers = config?.teamSettings?.maxSize || 5;
   const minMembers = config?.teamSettings?.minSize || 2;
   const isRegistrationOpen = config?.isRegistrationOpen ?? true;

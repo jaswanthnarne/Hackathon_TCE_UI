@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-import teamService from '../../../services/teamService';
-import { Loader } from '../../common/Loader';
+import { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import EmptyState from '../../common/EmptyState';
 
 const PRIORITY_MAP = {
@@ -10,22 +9,9 @@ const PRIORITY_MAP = {
 };
 
 const AnnouncementsView = () => {
-  const [announcements, setAnnouncements] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { announcements } = useOutletContext();
   const [expanded, setExpanded] = useState(null);
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await teamService.getAnnouncements();
-        setAnnouncements(data.data.announcements || []);
-      } catch (err) { console.error(err); }
-      finally { setLoading(false); }
-    };
-    fetch();
-  }, []);
-
-  if (loading) return <Loader text="Loading announcements..." />;
 
   const timeAgo = (date) => {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);

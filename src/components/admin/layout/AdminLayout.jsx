@@ -25,13 +25,20 @@ const AdminLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    import('../../../services/adminService').then(mod => {
-      mod.default.getConfig().then(res => {
-        const cfg = res.data.data.config;
-        setConfig(cfg);
-        if (cfg.timer) setTimerState(cfg.timer);
-      }).catch(() => {});
-    });
+    const fetchAdminConfig = () => {
+      import('../../../services/adminService').then(mod => {
+        mod.default.getConfig().then(res => {
+          const cfg = res.data?.data?.config;
+          if (cfg) {
+            setConfig(cfg);
+            if (cfg.timer) setTimerState(cfg.timer);
+          }
+        }).catch(() => {});
+      });
+    };
+    fetchAdminConfig();
+    const interval = setInterval(fetchAdminConfig, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

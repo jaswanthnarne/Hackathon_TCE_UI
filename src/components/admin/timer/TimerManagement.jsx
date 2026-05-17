@@ -12,20 +12,11 @@ const TimerManagement = () => {
   const [customDurationHours, setCustomDurationHours] = useState('24');
 
   useEffect(() => {
-    const fetchTimer = async () => {
-      try {
-        const res = await adminService.getConfig();
-        if (res.data.data.config?.timer) {
-          setTimerState(res.data.data.config.timer);
-        }
-      } catch (err) {
-        toast.error('Failed to load timer configuration');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTimer();
-  }, []);
+    if (initialConfig?.timer) {
+      setTimerState(initialConfig.timer);
+      setLoading(false);
+    }
+  }, [initialConfig?.timer]);
 
   useEffect(() => {
     let interval;
