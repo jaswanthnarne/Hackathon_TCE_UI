@@ -23,7 +23,7 @@ const AdminLogin = () => {
     try {
       await login(form);
       toast.success('Welcome back!');
-      navigate('/admin/dashboard');
+      navigate('/console/admin/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
     } finally { setLoading(false); }
@@ -53,7 +53,7 @@ const AdminLogin = () => {
                 <input type="checkbox" checked={form.rememberMe} onChange={(e) => setForm({ ...form, rememberMe: e.target.checked })} className="rounded border-white/30" />
                 Remember me
               </label>
-              <a href="/admin/forgot-password" className="text-sm text-white/70 hover:text-white">Forgot password?</a>
+              <a href="/console/admin/forgot-password" className="text-sm text-white/70 hover:text-white">Forgot password?</a>
             </div>
             <button type="submit" disabled={loading} className="w-full py-3 bg-white text-primary-600 font-bold rounded-xl hover:bg-white/90 transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2">
               {loading ? <><span className="h-5 w-5 animate-spin rounded-full border-2 border-primary-600 border-t-transparent" /> Signing in...</> : 'Sign In →'}

@@ -561,7 +561,7 @@ const HomePage = () => {
           <div className="flex gap-6 items-center">
             <button onClick={() => setActiveModal('terms')} className="bg-transparent border-none p-0 text-slate-400 hover:text-white transition-colors cursor-pointer font-medium text-xs">Terms</button>
             <button onClick={() => setActiveModal('privacy')} className="bg-transparent border-none p-0 text-slate-400 hover:text-white transition-colors cursor-pointer font-medium text-xs">Privacy</button>
-            {/* <a href="/admin/login" className="hover:text-white transition-colors">Admin Login</a> */}
+            {/* <a href="/console/admin/login" className="hover:text-white transition-colors">Admin Login</a> */}
           </div>
         </div>
       </footer>

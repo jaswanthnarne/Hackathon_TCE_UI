@@ -75,25 +75,25 @@ const Dashboard = () => {
         <div className="lg:col-span-1 space-y-4">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500 ml-1">Quick Access</h3>
           <div className="grid grid-cols-2 gap-4">
-            <a href="/admin/teams" className="card p-5 text-center group hover:bg-primary-50 hover:border-primary-100 transition-colors">
+            <a href="/console/admin/teams" className="card p-5 text-center group hover:bg-primary-50 hover:border-primary-100 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center mx-auto mb-3 text-primary-600 group-hover:scale-110 transition-transform">
                 <IconSvg d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" className="w-5 h-5" />
               </div>
               <span className="text-xs font-semibold text-slate-700">Teams</span>
             </a>
-            <a href="/admin/problems" className="card p-5 text-center group hover:bg-primary-50 hover:border-primary-100 transition-colors">
+            <a href="/console/admin/problems" className="card p-5 text-center group hover:bg-primary-50 hover:border-primary-100 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center mx-auto mb-3 text-primary-600 group-hover:scale-110 transition-transform">
                 <IconSvg d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" className="w-5 h-5" />
               </div>
               <span className="text-xs font-semibold text-slate-700">Questions</span>
             </a>
-            <a href="/admin/announcements" className="card p-5 text-center group hover:bg-primary-50 hover:border-primary-100 transition-colors">
+            <a href="/console/admin/announcements" className="card p-5 text-center group hover:bg-primary-50 hover:border-primary-100 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center mx-auto mb-3 text-primary-600 group-hover:scale-110 transition-transform">
                 <IconSvg d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" className="w-5 h-5" />
               </div>
               <span className="text-xs font-semibold text-slate-700">Announcements</span>
             </a>
-            <a href="/admin/results" className="card p-5 text-center group hover:bg-primary-50 hover:border-primary-100 transition-colors">
+            <a href="/console/admin/results" className="card p-5 text-center group hover:bg-primary-50 hover:border-primary-100 transition-colors">
               <div className="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center mx-auto mb-3 text-primary-600 group-hover:scale-110 transition-transform">
                 <IconSvg d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" className="w-5 h-5" />
               </div>
@@ -132,7 +132,7 @@ const Dashboard = () => {
             </div>
             {data?.recentActions?.length > 0 && (
               <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
-                <a href="/admin/audit" className="text-xs font-semibold uppercase tracking-wider text-primary-600 hover:text-primary-700 transition-colors">View Full Audit Log</a>
+                <a href="/console/admin/audit" className="text-xs font-semibold uppercase tracking-wider text-primary-600 hover:text-primary-700 transition-colors">View Full Audit Log</a>
               </div>
             )}
           </div>

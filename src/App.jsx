@@ -40,7 +40,7 @@ import { CertificateDownload } from './components/team/stubs';
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAdminAuth();
   if (loading) return <PageLoader />;
-  return isAuthenticated ? children : <Navigate to="/admin/login" />;
+  return isAuthenticated ? children : <Navigate to="/console/admin/login" />;
 };
 
 const TeamRoute = ({ children }) => {
@@ -63,11 +63,11 @@ function App() {
               <Route path="/invite/decline/:token" element={<InviteResponse action="decline" />} />
 
               {/* Admin Auth */}
-              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/console/admin/login" element={<AdminLogin />} />
 
               {/* Admin Panel */}
-              <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-                <Route index element={<Navigate to="/admin/dashboard" />} />
+              <Route path="/console/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+                <Route index element={<Navigate to="/console/admin/dashboard" />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="teams" element={<TeamManagement />} />
                 <Route path="problems" element={<ProblemBank />} />

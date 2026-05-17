@@ -11,7 +11,7 @@ api.interceptors.request.use((config) => {
   const adminToken = localStorage.getItem('adminToken');
   const teamToken = localStorage.getItem('teamToken');
   
-  if (config.url?.startsWith('/admin') && adminToken) {
+  if (config.url?.startsWith('/console/admin') && adminToken) {
     config.headers.Authorization = `Bearer ${adminToken}`;
   } else if (config.url?.startsWith('/team') && teamToken) {
     config.headers.Authorization = `Bearer ${teamToken}`;
@@ -28,11 +28,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      const isAdmin = error.config?.url?.startsWith('/admin');
+      const isAdmin = error.config?.url?.startsWith('/console/admin');
       if (isAdmin) {
         localStorage.removeItem('adminToken');
         localStorage.removeItem('adminUser');
-        if (!window.location.pathname.includes('/admin/login')) window.location.href = '/admin/login';
+        if (!window.location.pathname.includes('/console/admin/login')) window.location.href = '/console/admin/login';
       } else {
         localStorage.removeItem('teamToken');
         localStorage.removeItem('teamUser');
