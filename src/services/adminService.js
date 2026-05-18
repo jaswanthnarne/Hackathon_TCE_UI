@@ -104,6 +104,36 @@ const adminService = {
 
   // Audit
   getAuditLogs: (params) => api.get('/console/admin/audit', { params }),
+
+  // Staff Management (Volunteer, Mentor, Judge)
+  getStaff: (role) => api.get('/console/admin/staff', { params: { role } }),
+  createStaff: (data) => api.post('/console/admin/staff', data),
+  deleteStaff: (id) => api.delete(`/console/admin/staff/${id}`),
+  assignTeamsToJudge: (judgeId, teamIds) => api.post('/console/admin/staff/assign-teams', { judgeId, teamIds }),
+
+  // Meal Passes (Digital Coupon System)
+  getMealPasses: () => api.get('/console/admin/meal-passes'),
+  createMealPass: (data) => api.post('/console/admin/meal-passes', data),
+  updateMealPass: (id, data) => api.put(`/console/admin/meal-passes/${id}`, data),
+  deleteMealPass: (id) => api.delete(`/console/admin/meal-passes/${id}`),
+  getMealPassStats: () => api.get('/console/admin/meal-passes/stats'),
+
+  // Table Allocation
+  assignTable: (teamId, data) => api.put(`/console/admin/tables/${teamId}`, data),
+  bulkAssignTables: (assignments) => api.post('/console/admin/tables/bulk', { assignments }),
+  getVenueMap: () => api.get('/console/admin/tables/map'),
+
+  // Challenges (Midnight Mini-Challenges)
+  getChallenges: () => api.get('/console/admin/challenges'),
+  createChallenge: (data) => api.post('/console/admin/challenges', data),
+  updateChallenge: (id, data) => api.put(`/console/admin/challenges/${id}`, data),
+  deleteChallenge: (id) => api.delete(`/console/admin/challenges/${id}`),
+  markChallengeWinner: (challengeId, teamObjectId) => api.post('/console/admin/challenges/mark-winner', { challengeId, teamObjectId }),
+
+  // Judge Scoring (admin view)
+  getJudgingScoreboard: () => api.get('/console/admin/judging/scoreboard'),
+  getJudges: () => api.get('/console/admin/judging/judges'),
 };
 
 export default adminService;
+

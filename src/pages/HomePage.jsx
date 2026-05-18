@@ -6,6 +6,22 @@ const Icon = ({ d, className = 'w-5 h-5' }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d={d} /></svg>
 );
 
+// Safe image component: shows SVG fallback when image fails to load
+const SafeImg = ({ src, alt, className, fallbackIcon, fallbackClass }) => {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    if (fallbackIcon) {
+      return (
+        <div className={fallbackClass || className}>
+          <Icon d={fallbackIcon} className="w-full h-full p-1" />
+        </div>
+      );
+    }
+    return null;
+  }
+  return <img src={src} alt={alt} className={className} onError={() => setFailed(true)} />;
+};
+
 const ICON_MAP = {
   code: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
   rocket: 'M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m0 0a14.926 14.926 0 01-5.96-5.96',
@@ -248,7 +264,11 @@ const HomePage = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {c.logoUrl && <img src={c.logoUrl} alt="Logo" className="w-8 h-8 object-contain" />}
+            {c.logoUrl ? (
+              <SafeImg src={c.logoUrl} alt="Logo" className="w-8 h-8 object-contain" fallbackIcon={ICON_MAP.zap} fallbackClass="w-8 h-8 text-primary-600" />
+            ) : (
+              <div className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center"><Icon d={ICON_MAP.zap} className="w-5 h-5" /></div>
+            )}
             <span className="text-xl font-bold tracking-tight text-slate-900">{c.name || 'TCE Hackathon'}</span>
           </div>
           <div className="flex items-center gap-8">
@@ -301,15 +321,28 @@ const HomePage = () => {
 
           <div className="relative animate-slide-up" style={{ animationDelay: '0.2s' }}>
             <div className="absolute inset-0 bg-blue-100 rounded-[2.5rem] transform translate-x-4 translate-y-4"></div>
-            {c.bannerUrl ? (
-              <img src={c.bannerUrl} alt="Hero Banner" className="relative w-full h-[500px] object-cover rounded-[2.5rem] shadow-xl border-4 border-white" />
-            ) : (
-              <div className="relative w-full h-[500px] bg-gradient-to-br from-[#4F46E5] to-[#2563EB] rounded-[2.5rem] shadow-xl border-4 border-white flex flex-col items-center justify-center text-white overflow-hidden">
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent"></div>
-                <Icon d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" className="w-24 h-24 mb-6 opacity-90" />
-                <h3 className="text-3xl font-bold">Innovation Awaits</h3>
+            <div className="relative w-full h-[500px] rounded-[2.5rem] shadow-xl border-4 border-white overflow-hidden">
+              {c.bannerUrl ? (
+                <SafeImg src={c.bannerUrl} alt="Hero Banner" className="w-full h-full object-cover" />
+              ) : null}
+              {/* Always show gradient overlay with icons as visual fallback */}
+              <div className={`${c.bannerUrl ? 'hidden' : 'flex'} absolute inset-0 bg-gradient-to-br from-[#4F46E5] to-[#2563EB] flex-col items-center justify-center text-white`}>
+                <div className="absolute inset-0 opacity-10">
+                  <div className="grid grid-cols-4 gap-8 p-12 opacity-40">
+                    {[ICON_MAP.code, ICON_MAP.cpu, ICON_MAP.terminal, ICON_MAP.zap, ICON_MAP.globe, ICON_MAP.shield, ICON_MAP.lightbulb, ICON_MAP.rocket].map((d, i) => (
+                      <Icon key={i} d={d} className="w-16 h-16" />
+                    ))}
+                  </div>
+                </div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="w-24 h-24 rounded-3xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center mb-6">
+                    <Icon d={ICON_MAP.code} className="w-12 h-12" />
+                  </div>
+                  <h3 className="text-3xl font-bold">Innovation Awaits</h3>
+                  <p className="text-blue-200 mt-2 text-sm">Build • Ship • Scale</p>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </section>
@@ -463,11 +496,11 @@ const HomePage = () => {
                 <div key={s._id || i} className="group flex flex-col items-center">
                   {s.website ? (
                     <a href={s.website} target="_blank" rel="noopener noreferrer" className="block w-40 h-16 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                      {s.logoUrl ? <img src={s.logoUrl} alt={s.name} className="w-full h-full object-contain" /> : <div className="w-full h-full flex items-center justify-center font-bold text-xl text-slate-400 group-hover:text-primary-600 transition-colors">{s.name}</div>}
+                      {s.logoUrl ? <SafeImg src={s.logoUrl} alt={s.name} className="w-full h-full object-contain" fallbackIcon={ICON_MAP.layers} fallbackClass="w-full h-full flex items-center justify-center text-slate-400" /> : <div className="w-full h-full flex items-center justify-center font-bold text-xl text-slate-400 group-hover:text-primary-600 transition-colors">{s.name}</div>}
                     </a>
                   ) : (
                     <div className="w-40 h-16 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-                      {s.logoUrl ? <img src={s.logoUrl} alt={s.name} className="w-full h-full object-contain" /> : <div className="w-full h-full flex items-center justify-center font-bold text-xl text-slate-400 group-hover:text-primary-600 transition-colors">{s.name}</div>}
+                      {s.logoUrl ? <SafeImg src={s.logoUrl} alt={s.name} className="w-full h-full object-contain" fallbackIcon={ICON_MAP.layers} fallbackClass="w-full h-full flex items-center justify-center text-slate-400" /> : <div className="w-full h-full flex items-center justify-center font-bold text-xl text-slate-400 group-hover:text-primary-600 transition-colors">{s.name}</div>}
                     </div>
                   )}
                 </div>
@@ -509,7 +542,11 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
           <div>
             <div className="flex items-center gap-3 mb-6">
-              {c.logoUrl && <img src={c.logoUrl} alt="Logo" className="w-8 h-8 object-contain brightness-0 invert" />}
+              {c.logoUrl ? (
+                <SafeImg src={c.logoUrl} alt="Logo" className="w-8 h-8 object-contain brightness-0 invert" fallbackIcon={ICON_MAP.zap} fallbackClass="w-8 h-8 text-blue-400" />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-blue-900 text-blue-400 flex items-center justify-center"><Icon d={ICON_MAP.zap} className="w-5 h-5" /></div>
+              )}
               <div>
                 <div className="text-xl font-bold tracking-tight text-white">{c.name || 'TCE Hackathon'}</div>
                 <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Powered by Ethnotech</div>

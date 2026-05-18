@@ -20,11 +20,22 @@ const TeamDashboard = () => {
     <div className="space-y-6 animate-fade-in">
       {/* Welcome Banner */}
       <div className="card bg-gradient-to-r from-primary-500 to-secondary-600 p-6 text-white">
-        <h1 className="text-2xl font-bold">Welcome, {profile?.teamName}!</h1>
-        <p className="text-white/80 mt-1">Team ID: <span className="font-mono font-bold">{profile?.teamId}</span></p>
-        <div className="flex gap-4 mt-4 text-sm">
-          <span className="bg-white/20 px-3 py-1 rounded-full">{profile?.members?.length || 0} Members</span>
-          <span className="bg-white/20 px-3 py-1 rounded-full capitalize">{profile?.status}</span>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Welcome, {profile?.teamName}!</h1>
+            <p className="text-white/80 mt-1">Team ID: <span className="font-mono font-bold">{profile?.teamId}</span></p>
+            <div className="flex gap-4 mt-4 text-sm">
+              <span className="bg-white/20 px-3 py-1 rounded-full">{profile?.members?.length || 0} Members</span>
+              <span className="bg-white/20 px-3 py-1 rounded-full capitalize">{profile?.status}</span>
+            </div>
+          </div>
+          {profile?.tableNumber && (
+            <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20 flex flex-col items-center justify-center text-center self-start sm:self-auto min-w-[150px]">
+              <span className="text-3xl mb-1">📍</span>
+              <p className="text-[10px] text-white/70 uppercase tracking-widest font-bold">Your Location</p>
+              <h3 className="text-xl font-black">{profile.zone ? `Zone ${profile.zone}, ` : ''}Table {profile.tableNumber}</h3>
+            </div>
+          )}
         </div>
       </div>
 
@@ -86,6 +97,24 @@ const TeamDashboard = () => {
             </div>
           )}
         </div>
+
+        {/* Badges Cabinet */}
+        {profile?.badges && profile.badges.length > 0 && (
+          <div className="card p-6 col-span-1 lg:col-span-2">
+            <h3 className="text-lg font-semibold text-dark-900 dark:text-dark-100 mb-4">🏆 Team Trophy Cabinet</h3>
+            <div className="flex flex-wrap gap-3">
+              {profile.badges.map((b, idx) => (
+                <div key={idx} className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/30 rounded-2xl shadow-sm">
+                  <span className="text-2xl animate-pulse">🛡️</span>
+                  <div>
+                    <p className="font-bold text-amber-700 dark:text-amber-400 text-sm">{b.name}</p>
+                    <p className="text-[10px] text-slate-500">Awarded: {new Date(b.awardedAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

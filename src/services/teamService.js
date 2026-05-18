@@ -28,6 +28,22 @@ const teamService = {
   getLeaderboard: () => api.get('/team/leaderboard'),
   getCertificate: () => api.get('/team/certificate'),
   getHackathonInfo: () => api.get('/public/hackathon-info'),
+
+  // Wallet (Digital Coupons)
+  getWallet: () => api.get('/team/wallet'),
+  tapRedeem: (passId) => api.post('/team/wallet/tap-redeem', { passId }),
+
+  // Help Desk
+  requestHelp: (data) => api.post('/team/help/request', data),
+  getMyHelpRequests: () => api.get('/team/help/my-requests'),
+
+  // Challenges
+  getActiveChallenges: () => api.get('/team/challenges'),
+  submitChallengeProof: (data) => api.post('/team/challenges/submit', data),
+  getMyBadges: () => api.get('/team/badges'),
+
+  // Venue Map
+  getVenueMap: () => api.get('/team/venue-map'),
 };
 
 export default teamService;
